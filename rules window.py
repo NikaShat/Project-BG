@@ -1,14 +1,19 @@
 import pygame
+import os
 
 
 class Rules_Window():
     def __init__(self):
         pygame.init()
-        self.size = 600, 600
-        self.screen = pygame.display.set_mode(self.size)
+
+    def load_image(self, name, colorkey=None):
+        fullname = os.path.join('data', name)
+        image = pygame.image.load(fullname).convert()
+        return image
 
     def draw(self):
-        pass
+        image = self.load_image('rules window.jpg')
+        screen.blit(image, (0, 0))
 
 
 pygame.quit()
