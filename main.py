@@ -1,10 +1,11 @@
 import pygame
 import os, sqlite3
-import window, load_image, defaut_stats, hero_presentation, generate_levels
+import window, load_image, defaut_stats, hero_presentation, generate_levels, camera, classes
 
 pygame.init()
 size = WIDTH, HEIGHT = 600, 600
 screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
 
 startwindow = window.Window(screen)
 startwindow.draw('start window.jpg')
@@ -21,10 +22,18 @@ Flag_select_barbarian = False
 Flag_select_crusader = False
 Flag_select_necromancer = False
 
+FPS = 50
+STEP = 10
+
+different_images = 0
+UPDATE_IMAGE = 30
+pygame.time.set_timer(UPDATE_IMAGE, 3000)
 
 all_sprites = pygame.sprite.Group()
 tiles_group = pygame.sprite.Group()
-
+player_group = pygame.sprite.Group()
+tiles_group_not_collide = pygame.sprite.Group()
+tiles_group_collide = pygame.sprite.Group()
 
 conn = sqlite3.connect("data/database.db")
 curr = conn.cursor()
@@ -43,6 +52,16 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == UPDATE_IMAGE:
+            if Flag_start_window_on:
+                if different_images == 1:
+                    startwindow = window.Window(screen)
+                    startwindow.draw('start window bw.jpg')
+                    different_images = 0
+                else:
+                    startwindow = window.Window(screen)
+                    startwindow.draw('start window.jpg')
+                    different_images = 1
         if event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed():
             if 200 <= event.pos[0] <= 400 and 200 <= event.pos[1] <= 250 and Flag_start_window_on:
                 if save_file_exist:
@@ -137,7 +156,9 @@ while running:
                 Flag_select_barbarian = False
                 Flag_select_crusader = False
                 Flag_select_necromancer = True
-            if 450 < event.pos[1] < 520 and 20 < event.pos[0] < 250 and Flag_player_window_on:
+            if (450 < event.pos[1] < 520 and 20 < event.pos[0] < 250 and Flag_player_window_on and
+               (Flag_select_archer or Flag_select_wizard or Flag_select_necromancer or Flag_select_barbarian or
+               Flag_select_crusader)):
                 levelwindow = window.Window(screen)
                 levelwindow.draw('levels window.jpg')
                 Flag_player_window_on = False
@@ -156,15 +177,113 @@ while running:
                 Flag_level_window_on = False
                 Flag_player_window_on = True
             if 250 < event.pos[1] < 350 and 50 < event.pos[0] < 150 and Flag_level_window_on:
-                generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
-                                               tiles_group, all_sprites, 1)
+                if Flag_select_crusader:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
+                                                                            player_group, tiles_group, all_sprites, 1,
+                                                                            'crusader', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_barbarian:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
+                                                                            player_group, tiles_group, all_sprites, 1,
+                                                                            'barbarian', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_wizard:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
+                                                                            player_group, tiles_group, all_sprites, 1,
+                                                                            'wizard', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_archer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
+                                                                            player_group, tiles_group, all_sprites, 1,
+                                                                            'archer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_necromancer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 1.txt"),
+                                                                            player_group, tiles_group, all_sprites, 1,
+                                                                            'necromancer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                game_camera = camera.Camera((level_x, level_y))
             if 250 < event.pos[1] < 350 and 250 < event.pos[0] < 350 and Flag_level_window_on:
-                generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
-                                               tiles_group, all_sprites, 2)
+                if Flag_select_crusader:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
+                                                                            player_group, tiles_group, all_sprites, 2,
+                                                                            'crusader', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_barbarian:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
+                                                                            player_group, tiles_group, all_sprites, 2,
+                                                                            'barbarian', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_wizard:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
+                                                                            player_group, tiles_group, all_sprites, 2,
+                                                                            'wizard', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_archer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
+                                                                            player_group, tiles_group, all_sprites, 2,
+                                                                            'archer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_necromancer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 2.txt"),
+                                                                            player_group, tiles_group, all_sprites, 2,
+                                                                            'necromancer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                game_camera = camera.Camera((level_x, level_y))
             if 250 < event.pos[1] < 350 and 450 < event.pos[0] < 550 and Flag_level_window_on:
-                generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
-                                               tiles_group, all_sprites, 3)
+                if Flag_select_crusader:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
+                                                                            player_group, tiles_group, all_sprites, 3,
+                                                                            'crusader', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_barbarian:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
+                                                                            player_group, tiles_group, all_sprites, 3,
+                                                                            'barbarian', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_wizard:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
+                                                                            player_group, tiles_group, all_sprites, 3,
+                                                                            'wizard', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_archer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
+                                                                            player_group, tiles_group, all_sprites, 3,
+                                                                            'archer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                elif Flag_select_necromancer:
+                    hero, level_x, level_y = generate_levels.generate_level(generate_levels.load_level("level 3.txt"),
+                                                                            player_group, tiles_group, all_sprites, 3,
+                                                                            'necromancer', tiles_group_collide,
+                                                                            tiles_group_not_collide)
+                game_camera = camera.Camera((level_x, level_y))
+        if event.type == pygame.KEYDOWN:
+            if (event.key == pygame.K_LEFT or event.key == pygame.K_a):
+                hero.rect.x -= STEP
+                if not hero.update(tiles_group_not_collide, tiles_group_collide):
+                    hero.rect.x += STEP
+            if (event.key == pygame.K_RIGHT or event.key == pygame.K_d):
+                hero.rect.x += STEP
+                if not hero.update(tiles_group_not_collide, tiles_group_collide):
+                    hero.rect.x -= STEP
+            if (event.key == pygame.K_UP or event.key == pygame.K_w):
+                hero.rect.y -= STEP
+                if not hero.update(tiles_group_not_collide, tiles_group_collide):
+                    hero.rect.y += STEP
+            if (event.key == pygame.K_DOWN or event.key == pygame.K_s):
+                hero.rect.y += STEP
+                if not hero.update(tiles_group_not_collide, tiles_group_collide):
+                    hero.rect.y -= STEP
+
+    if 'game_camera' in globals():
+        game_camera.update(hero, WIDTH, HEIGHT)
+
+    for sprite in all_sprites:
+        game_camera.apply(sprite)
 
     tiles_group.draw(screen)
+    player_group.draw(screen)
+
+    clock.tick(FPS)
 
     pygame.display.flip()

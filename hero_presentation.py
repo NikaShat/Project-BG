@@ -5,17 +5,17 @@ cur = con.cursor()
 
 
 def presentation(classes, screen):
-#    if classes == 'wizard':
-#        image = load_image.loadimage('wizard.png')
- #   elif classes == 'archer':
- #       image = load_image.loadimage('archer.png')
- #   elif classes == 'barbarian':
-  #      image = load_image.loadimage('barbarian.png')
+  #  if classes == 'wizard':
+  #      image = load_image.loadimage('wizard_present.png')
+  #  elif classes == 'archer':
+   #     image = load_image.loadimage('archer_present.png')
+    #elif classes == 'barbarian':
+     #   image = load_image.loadimage('barbarian_present.png')
   #  elif classes == 'crusader':
-       # image = load_image.loadimage('crusader.png')
+   #     image = load_image.loadimage('crusader_present.png')
    # else:
-       # image = load_image.loadimage('necromancer.png')
-    #screen.blit(image, (290, 120))
+    #    image = load_image.loadimage('necromancer_present.png')
+   # screen.blit(image, (290, 120))
     BACKGROUND_COLOR = (254, 240, 205)
     font = pygame.font.Font('data/game_font.ttf', 20)
     font_for_level = pygame.font.Font('data/game_font.ttf', 36)
