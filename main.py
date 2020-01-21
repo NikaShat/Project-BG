@@ -22,6 +22,10 @@ Flag_select_barbarian = False
 Flag_select_crusader = False
 Flag_select_necromancer = False
 
+pygame.mixer.init()
+pygame.mixer.music.load('data/music/start_window_theme.mp3')
+pygame.mixer.music.play(-1)
+
 FPS = 50
 STEP = 10
 
@@ -85,13 +89,13 @@ while running:
             if 180 <= event.pos[0] <= 280 and 350 <= event.pos[1] <= 380 and Flag_dialog_window_on:
                 playerwindow = window.Window(screen)
                 playerwindow.draw('player window.jpg')
-                defaut_stats.defaultstats()
                 Flag_dialog_window_on = False
                 Flag_player_window_on = True
                 curr.execute("""UPDATE player SET money = 50 WHERE key = 1""").fetchall()
                 money_number = (curr.execute("""SELECT money FROM player WHERE key = 1""").fetchall())[0][0]
                 text_money = font.render(str(money_number), 1, (0, 0, 0), BACKGROUND_TEXT_MONEY)
                 screen.blit(text_money, (390, 20))
+                defaut_stats.defaultstats()
             if 320 <= event.pos[0] <= 420 and 350 <= event.pos[1] <= 380 and Flag_dialog_window_on:
                 startwindow = window.Window(screen)
                 startwindow.draw('start window.jpg')
@@ -168,6 +172,23 @@ while running:
                 startwindow.draw('start window.jpg')
                 Flag_start_window_on = True
                 Flag_player_window_on = False
+            if 370 <= event.pos[0] <= 500 and 540 <= event.pos[1] <= 570 and Flag_player_window_on:
+                print('ok')
+                if Flag_select_necromancer and money_number - 100 >= 0:
+                    upgrade_hero_stats = classes.Hero(player_group, all_sprites, 'necromancer', 0, 0)
+                    upgrade_hero_stats.upgrade(money_number, screen)
+                elif Flag_select_archer and money_number - 100 >= 0:
+                    upgrade_hero_stats = classes.Hero(player_group, all_sprites, 'archer', 0, 0)
+                    upgrade_hero_stats.upgrade(money_number, screen)
+                elif Flag_select_wizard and money_number - 100 >= 0:
+                    upgrade_hero_stats = classes.Hero(player_group, all_sprites, 'wizard', 0, 0)
+                    upgrade_hero_stats.upgrade(money_number, screen)
+                elif Flag_select_barbarian and money_number - 100 >= 0:
+                    upgrade_hero_stats = classes.Hero(player_group, all_sprites, 'barbarian', 0, 0)
+                    upgrade_hero_stats.upgrade(money_number, screen)
+                elif Flag_select_crusader and money_number - 100 >= 0:
+                    upgrade_hero_stats = classes.Hero(player_group, all_sprites, 'crusader', 0, 0)
+                    upgrade_hero_stats.upgrade(money_number, screen)
             if 530 < event.pos[1] < 580 and 230 < event.pos[0] < 370 and Flag_level_window_on:
                 playerwindow = window.Window(screen)
                 playerwindow.draw('player window.jpg')
@@ -202,6 +223,7 @@ while running:
                                                                             player_group, tiles_group, all_sprites, 1,
                                                                             'necromancer', tiles_group_collide,
                                                                             tiles_group_not_collide)
+                pygame.mixer.music.stop()
                 game_camera = camera.Camera((level_x, level_y))
             if 250 < event.pos[1] < 350 and 250 < event.pos[0] < 350 and Flag_level_window_on:
                 if Flag_select_crusader:

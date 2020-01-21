@@ -1,4 +1,4 @@
-import pygame, load_image, sqlite3
+import pygame, load_image, sqlite3, hero_presentation
 
 con = sqlite3.connect("data/database.db")
 cur = con.cursor()
@@ -12,6 +12,8 @@ class Hero(pygame.sprite.Sprite):
         self.defence = (cur.execute(f"""SELECT defence FROM classes WHERE name = '{classes}'""").fetchall())[0][0]
         self.float_defence = (101 - self.defence) / 100
         self.speed = (cur.execute(f"""SELECT health FROM classes WHERE name = '{classes}'""").fetchall())[0][0]
+        self.intell = (cur.execute(f"""SELECT intelligence FROM classes WHERE name = '{classes}'""").fetchall())[0][0]
+        self.classe = classes
 
         if classes == 'wizard':
             self.image = load_image.loadimage("wizard.png")
@@ -37,12 +39,33 @@ class Hero(pygame.sprite.Sprite):
         else:
             self.health += hp
 
-    def upgrade(self):
+
+    def upgrade(self, screen, money):
         self.health += 1
         self.strength += 1
         self.defence += 1
         self.defence = (101 - self.defence) / 100
         self.speed += 1
+        self.intell += 1
+        cur.execute(f"""UPDATE classes
+                        SET speed = {self.speed}
+                        WHERE name = '{self.classe}'""").fetchall()
+        cur.execute(f"""UPDATE classes 
+                        SET intelligence = {self.intell}
+                        WHERE name = '{self.classe}'""").fetchall()
+        cur.execute(f"""UPDATE classes 
+                        SET defence = {self.defence}
+                        WHERE name = '{self.classe}'""").fetchall()
+        cur.execute(f"""UPDATE classes 
+                        SET strength = {self.strength}
+                        WHERE name = '{self.classe}'""").fetchall()
+        cur.execute(f"""UPDATE classes 
+                        SET health = {self.health}
+                        WHERE name = '{self.classe}'""").fetchall()
+        cur.execute(f"""UPDATE player
+                        SET money = {money - 100}
+                        WHERE key = 1""").fetchall()
+        hero_presentation.presentation(self.classe, screen)
 
     def update(self, tiles_group_not_collide, tiles_group_collide):
         if pygame.sprite.spritecollideany(self, tiles_group_not_collide):
