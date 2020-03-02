@@ -1,5 +1,5 @@
 import pygame
-import load_image, classes
+import load_image, classes, enemies
 
 pygame.init()
 
@@ -19,7 +19,8 @@ def load_level(filename):
     return list(map(lambda x: x.ljust(max_width, '.'), level_map))
 
 
-def generate_level(level, player_group, tiles_group, all_sprites, level_num, classess, collide, not_collide):
+def generate_level(level, player_group, tiles_group, all_sprites, level_num, classess, collide, not_collide,
+                   health_group, money_group, exit_group, enemy_group, cur):
     if level_num == 1:
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -28,7 +29,8 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '-':
                     Tile('earth', x, y, 1, tiles_group, all_sprites, collide)
                 elif level[y][x] == '*':
-                    Tile('heart', x, y, 1, tiles_group, all_sprites, collide)
+                    Tile('earth', x, y, 1, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, health_group, all_sprites, 1, 'heart')
                 elif level[y][x] == 'r':
                     Tile('river', x, y, 1, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == 'b':
@@ -36,14 +38,19 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '^':
                     Tile('forest', x, y, 1, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '$':
-                    Tile('money', x, y, 1, tiles_group, all_sprites, collide)
+                    Tile('earth', x, y, 1, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, money_group, all_sprites, 1, 'money')
                 elif level[y][x] == '+':
                     Tile('mountain', x, y, 1, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '!':
                     Tile('exit', x, y, 1, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, exit_group, all_sprites, 1, 'exit')
                 elif level[y][x] == '@':
                     Tile('earth', x, y, 1, tiles_group, all_sprites, collide)
-                    hero = classes.Hero(player_group, all_sprites, classess, x, y)
+                    hero = classes.Hero(player_group, all_sprites, classess, x, y, cur, True)
+                elif level[y][x] == '#':
+                    Tile('earth', x, y, 1, tiles_group, all_sprites, collide)
+                    enemy = enemies.Enemy(enemy_group, all_sprites, 'animal', x, y, cur, True)
     elif level_num == 2:
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -52,7 +59,8 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '-':
                     Tile('sand', x, y, 2, tiles_group, all_sprites, collide)
                 elif level[y][x] == '*':
-                    Tile('heart', x, y, 2, tiles_group, all_sprites, collide)
+                    Tile('sand', x, y, 2, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, health_group, all_sprites, 2, 'heart')
                 elif level[y][x] == '^':
                     Tile('ruins', x, y, 2, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == 'b':
@@ -60,16 +68,21 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '=':
                     Tile('cliff', x, y, 2, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '$':
-                    Tile('money', x, y, 2, tiles_group, all_sprites, collide)
+                    Tile('sand', x, y, 2, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, money_group, all_sprites, 2, 'money')
                 elif level[y][x] == '+':
                     Tile('mountain', x, y, 2, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '%':
                     Tile('plant', x, y, 2, tiles_group, all_sprites, collide)
                 elif level[y][x] == '!':
                     Tile('exit', x, y, 2, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, exit_group, all_sprites, 2, 'exit')
                 elif level[y][x] == '@':
                     Tile('sand', x, y, 2, tiles_group, all_sprites, collide)
-                    hero = classes.Hero(player_group, all_sprites, classess, x, y)
+                    hero = classes.Hero(player_group, all_sprites, classess, x, y, cur, True)
+                elif level[y][x] == '#':
+                    Tile('sand', x, y, 2, tiles_group, all_sprites, collide)
+                    enemy = enemies.Enemy(enemy_group, all_sprites, 'worm', x, y, cur, True)
     else:
         for y in range(len(level)):
             for x in range(len(level[y])):
@@ -78,7 +91,8 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '-':
                     Tile('swamp', x, y, 3, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '*':
-                    Tile('heart', x, y, 3, tiles_group, all_sprites, collide)
+                    Tile('bridge', x, y, 3, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, health_group, all_sprites, 3, 'heart')
                 elif level[y][x] == '+':
                     Tile('wall', x, y, 3, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == 'b':
@@ -86,14 +100,19 @@ def generate_level(level, player_group, tiles_group, all_sprites, level_num, cla
                 elif level[y][x] == '^':
                     Tile('bridge', x, y, 3, tiles_group, all_sprites, collide)
                 elif level[y][x] == '$':
-                    Tile('money', x, y, 3, tiles_group, all_sprites, collide)
+                    Tile('bridge', x, y, 3, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, money_group, all_sprites, 3, 'money')
                 elif level[y][x] == 'o':
                     Tile('crack', x, y, 3, tiles_group, all_sprites, not_collide)
                 elif level[y][x] == '!':
                     Tile('exit', x, y, 3, tiles_group, all_sprites, collide)
+                    HealthMoneyExit(x, y, exit_group, all_sprites, 3, 'exit')
                 elif level[y][x] == '@':
                     Tile('earth', x, y, 3, tiles_group, all_sprites, collide)
-                    hero = classes.Hero(player_group, all_sprites, classess, x, y)
+                    hero = classes.Hero(player_group, all_sprites, classess, x, y, cur, True)
+                elif level[y][x] == '#':
+                    Tile('bridge', x, y, 3, tiles_group, all_sprites, collide)
+                    enemy = enemies.Enemy(enemy_group, all_sprites, 'skeleton', x, y, cur, True)
     return hero, x, y
 
 
@@ -139,4 +158,16 @@ class Tile(pygame.sprite.Sprite):
         else:
             self.image = tile_images_level3[tile_type]
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
+
+
+class HealthMoneyExit(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, group,  all_sprites, level_num, tile_type):
+        super().__init__(group, all_sprites)
+        if level_num == 1:
+            self.image = tile_images_level1[tile_type]
+        elif level_num == 2:
+            self.image = tile_images_level2[tile_type]
+        else:
+            self.image = tile_images_level3[tile_type]
         self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)

@@ -1,6 +1,8 @@
 import pygame
 import os
 
+# загрузка картинки
+
 
 def loadimage(name):
     fullname = os.path.join('data', name)

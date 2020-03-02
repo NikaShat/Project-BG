@@ -1,16 +1,13 @@
 import sqlite3
 
+# сброс статов до начальных значений
 
-def defaultstats():
-    con = sqlite3.connect("data\database.db")
-    cur = con.cursor()
 
+def defaultstats(cur):
     cur.execute("""UPDATE classes 
-                   SET level = 0 
-                   WHERE null = NULL """).fetchall()
+                   SET level = 0""").fetchall()
     cur.execute("""UPDATE classes 
-                   SET health = 10 
-                   WHERE null = NULL """).fetchall()
+                   SET health = 10""").fetchall()
     cur.execute("""UPDATE classes 
                    SET strength = 3 
                    WHERE name IN ('wizard', 'necromancer')""").fetchall()
