@@ -1,9 +1,8 @@
 import pygame
 import load_image
 
+
 # вставка картинки уровня
-
-
 class Window:
     def __init__(self, screen):
         pygame.init()
